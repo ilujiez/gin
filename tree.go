@@ -112,6 +112,7 @@ const (
 	catchAll
 )
 
+// 路由节点
 type node struct {
 	path      string
 	indices   string

@@ -52,9 +52,12 @@ type Context struct {
 	Request   *http.Request
 	Writer    ResponseWriter
 
-	Params   Params
-	handlers HandlersChain
-	index    int8
+	Params Params
+	// 为什么要加在context中？
+	// type HandlerFunc func(*Context)
+	// type HandlersChain []HandlerFunc
+	handlers HandlersChain // 控制器链路
+	index    int8          // 当前执行到哪一个控制器
 	fullPath string
 
 	engine       *Engine
@@ -93,7 +96,7 @@ func (c *Context) reset() {
 	c.Writer = &c.writermem
 	c.Params = c.Params[:0]
 	c.handlers = nil
-	c.index = -1
+	c.index = -1 //
 
 	c.fullPath = ""
 	c.Keys = nil
@@ -162,7 +165,7 @@ func (c *Context) FullPath() string {
 /************************************/
 /*********** FLOW CONTROL ***********/
 /************************************/
-
+// 只在中间件内部调用
 // Next should be used only inside middleware.
 // It executes the pending handlers in the chain inside the calling handler.
 // See example in GitHub.

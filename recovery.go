@@ -72,6 +72,7 @@ func CustomRecoveryWithWriter(out io.Writer, handle RecoveryFunc) HandlerFunc {
 					stack := stack(3)
 					httpRequest, _ := httputil.DumpRequest(c.Request, false)
 					headers := strings.Split(string(httpRequest), "\r\n")
+					// 打印堆栈信息时，header中的Authorization信息不打印
 					for idx, header := range headers {
 						current := strings.Split(header, ":")
 						if current[0] == "Authorization" {
@@ -89,6 +90,7 @@ func CustomRecoveryWithWriter(out io.Writer, handle RecoveryFunc) HandlerFunc {
 							timeFormat(time.Now()), err, stack, reset)
 					}
 				}
+				// 如果是中断异常
 				if brokenPipe {
 					// If the connection is dead, we can't write a status to it.
 					c.Error(err.(error)) // nolint: errcheck

@@ -41,9 +41,13 @@ var defaultTrustedCIDRs = []*net.IPNet{
 }
 
 // HandlerFunc defines the handler used by gin middleware as return value.
+// 这个为什么不返回error呢？
+// 中间件返回HandlerFunc？中间件也看作是一个控制器，装饰器模式
 type HandlerFunc func(*Context)
 
 // HandlersChain defines a HandlerFunc slice.
+// 哪里用到了这个HandlersChain？
+// 1、Context中
 type HandlersChain []HandlerFunc
 
 // Last returns the last handler in the chain. i.e. the last handler is the main one.
@@ -294,10 +298,12 @@ func (engine *Engine) NoMethod(handlers ...HandlerFunc) {
 	engine.rebuild405Handlers()
 }
 
+// 注册中间件列表
 // Use attaches a global middleware to the router. i.e. the middleware attached through Use() will be
 // included in the handlers chain for every single request. Even 404, 405, static files...
 // For example, this is the right place for a logger or error management middleware.
 func (engine *Engine) Use(middleware ...HandlerFunc) IRoutes {
+	// 为路由批量设置中间件
 	engine.RouterGroup.Use(middleware...)
 	engine.rebuild404Handlers()
 	engine.rebuild405Handlers()
